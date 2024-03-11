@@ -17,6 +17,8 @@ header {
 .nav-button {
     background-color: #8257fd;
     color: rgb(0, 0, 0);
+    font-size: 18px;
+    font-weight: bold;
     padding: 10px 15px;
     text-decoration: none;
     border-radius: 5px;
@@ -131,6 +133,8 @@ footer nav ul li {
 #contact-form button {
     background-color: #333;
     color: white;
+    font-size: 18px;
+    font-weight: bold;
     padding: 10px 15px;
     border: none;
     cursor: pointer;
@@ -194,6 +198,8 @@ footer nav ul li {
 .service-category .buy-button {
     background-color: #8257fd;
     color: rgb(0, 0, 0);
+    font-size: 18px;
+    font-weight: bold;
     padding: 10px 15px;
     text-decoration: none;
     border-radius: 5px;
@@ -249,6 +255,8 @@ footer nav ul li {
 .buy-button {
     background-color: #8257fd;
     color: rgb(0, 0, 0);
+    font-size: 18px;
+    font-weight: bold;
     padding: 10px 15px;
     text-decoration: none;
     border-radius: 5px;
@@ -337,6 +345,7 @@ h6 {
 .footer-link {
     color: #000000;
     text-decoration: none;
+    font-weight: bold;
 }
 
 .footer-link:hover {
