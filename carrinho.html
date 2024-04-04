@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Carrinho de Compras</title>
+</head>
+
+<body>
+    <header>
+        <a href="#" id="logo">
+            <img src="download99.png" alt="Pet Shop FELIZ">
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="nav-button">Home</a></li>
+                <li><a href="sobre.html" class="nav-button">Sobre</a></li>
+                <li><a href="servicos.html" class="nav-button">Serviços</a></li>
+                <li><a href="produtos.html" class="nav-button">Produtos</a></li>
+                <li><a href="contato.html" class="nav-button">Contato</a></li>
+                <li><a href="depoimentos.html" class="nav-button">Feedback</a></li>
+                <li><a href="carrinho.html" class="nav-button">Carrinho</a></li>
+            </ul>
+        </nav>
+        <div id="contact-info">
+            <p>Telefone: (11) 8234-5678</p>
+            <p>Email: contato@petshopfeliz.com</p>
+            <p>Endereço: Rua E, 123 - Cidade Pet</p>
+        </div>
+    </header>
+
+    <section id="carrinho">
+        <h2>Itens no Carrinho</h2>
+        <ul id="itens-carrinho">
+        </ul>
+        <p id="total"></p>
+        <button onclick="limparCarrinho()">Limpar Carrinho</button>
+
+        <form id="checkout-form">
+            <label for="forma-pagamento">Forma de Pagamento:</label>
+            <select id="forma-pagamento" name="forma-pagamento">
+                <option value="cartao">Cartão de Crédito</option>
+                <option value="boleto">Boleto</option>
+            </select>
+            <br>
+            <label for="cep">CEP:</label>
+            <input type="text" id="cep" name="cep" maxlength="9" pattern="\d{5}-?\d{3}" placeholder="00000-000">
+            <button type="button" onclick="buscarEndereco()">Buscar</button>
+            <div id="endereco"></div>
+            <br>
+            <button type="submit">Finalizar Compra</button>
+        </form>
+    </section>
+
+    <footer>
+        <nav>
+            <ul>
+                <li><a href="#" class="footer-link">Política de Privacidade</a></li>
+                <li><a href="#" class="footer-link">Termos de Serviço</a></li>
+                <li><a href="#" class="footer-link">Mapa do Site</a></li>
+            </ul>
+        </nav>
+        <div id="social-media">
+            <a href="#" target="_blank">Facebook</a>
+            <a href="#" target="_blank">Instagram</a>
+            <a href="#" target="_blank">Twitter</a>
+        </div>
+    </footer>
+
+    <script>
+        function calcularTotal() {
+            const cart = JSON.parse(localStorage.getItem('carrinho'));
+            let total = 0;
+            if (cart && cart.length > 0) {
+                cart.forEach(item => {
+                    total += item.preco;
+                });
+                const endereco = document.getElementById('endereco').innerText;
+                if (endereco) {
+                    total += 10;
+                }
+            }
+            document.getElementById('total').textContent = `Total: R$ ${total.toFixed(2)}`;
+            return total;
+        }
+
+        function displayCart() {
+            const cart = JSON.parse(localStorage.getItem('carrinho'));
+            const cartList = document.getElementById('itens-carrinho');
+
+            cartList.innerHTML = '';
+
+            if (cart && cart.length > 0) {
+                cart.forEach((item, index) => {
+                    const cartItem = document.createElement('li');
+
+                    const img = document.createElement('img');
+                    img.src = item.imagem;
+                    img.alt = item.nome;
+                    cartItem.appendChild(img);
+
+                    const text = document.createElement('span');
+                    text.textContent = item.nome + ' - R$ ' + item.preco.toFixed(2);
+                    cartItem.appendChild(text);
+
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'Remover';
+                    removeButton.addEventListener('click', () => {
+                        cart.splice(index, 1);
+                        localStorage.setItem('carrinho', JSON.stringify(cart));
+                        displayCart();
+                        calcularTotal();
+                    });
+                    cartItem.appendChild(removeButton);
+
+                    cartList.appendChild(cartItem);
+                });
+            } else {
+                cartList.innerHTML = '<p>Carrinho vazio</p>';
+            }
+
+            calcularTotal();
+        }
+
+        function limparCarrinho() {
+            localStorage.removeItem('carrinho');
+            displayCart();
+        }
+
+        function buscarEndereco() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            const url = `https://viacep.com.br/ws/${cep}/json/`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erro) {
+                        document.getElementById('endereco').innerText = "CEP não encontrado.";
+                    } else {
+                        const endereco = `Endereço: ${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
+                        document.getElementById('endereco').innerText = endereco;
+
+                        calcularTotal();
+                    }
+                })
+                .catch(error => console.error('Erro:', error));
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const total = calcularTotal();
+            const formaPagamento = document.getElementById('forma-pagamento').value;
+            const cep = document.getElementById('cep').value;
+
+            alert(`Total da Compra: R$ ${total.toFixed(2)}\nForma de Pagamento: ${formaPagamento}\nCEP: ${cep}`);
+
+            limparCarrinho();
+        });
+
+        window.onload = function() {
+            displayCart();
+        };
+    </script>
+</body>
+
+</html>
